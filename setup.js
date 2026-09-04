@@ -1,0 +1,4 @@
+const form=document.getElementById('setupForm'),msg=document.getElementById('setupMsg'),cfg=ACSRuntime.read();
+form.appsScriptUrl.value=cfg.appsScriptUrl||'';form.workshopSlug.value=cfg.workshopSlug||'acs-electronic-city';form.whatsappMode.value=cfg.whatsapp?.mode||'click_to_chat';form.businessPhone.value=cfg.whatsapp?.businessPhone||'919999827339';form.phoneNumberId.value=cfg.whatsapp?.phoneNumberId||'';
+form.onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(form));ACSRuntime.write({...cfg,appsScriptUrl:f.appsScriptUrl.trim().replace(/\/$/,''),workshopSlug:f.workshopSlug.trim(),whatsapp:{...(cfg.whatsapp||{}),mode:f.whatsappMode,businessPhone:f.businessPhone.trim(),phoneNumberId:f.phoneNumberId.trim()}});msg.textContent='Configuration saved in this browser. You can now sign in.'};
+document.getElementById('clearSetup').onclick=()=>{ACSRuntime.clear();ACSApi.setSession(null);location.reload()};
