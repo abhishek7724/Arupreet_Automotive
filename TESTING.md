@@ -1,17 +1,16 @@
-# ACS v0.3.2 testing checklist
+# ACS v0.4.0 checks
 
-1. Sign in using the existing ACS email/password.
-2. From the public website, submit a booking.
-3. Keep Operations open and confirm the booking appears automatically within a few seconds. The top-right ↻ icon is only a manual fallback.
-4. Confirm it appears in Appointments as `Booked` with no approval action.
-5. Click **Inspect** and enter odometer/complaint.
-6. Add inspection findings.
-7. Generate/print a Job Card (optional).
-8. Click **Generate bill**.
-9. Select a stocked item and confirm UOM + selling rate auto-fill.
-10. Confirm compatible items for that make/model are marked `✓` and sorted first.
-11. Add labour and save the bill.
-12. Confirm the invoice is created, job becomes completed, vehicle history is saved and inventory on-hand is reduced.
-13. Open Inventory → Stock on an item. Confirm UOM and latest purchase cost are prefilled and older costs appear as suggestions.
-14. Add/edit compatibility tags and verify they affect bill item ordering.
-15. Check that normal saves feel immediate and that direct backend edits appear automatically without a manual refresh.
+Run from this folder:
+
+```text
+node --test tests/backend.test.cjs
+node tests/browser.test.cjs
+```
+
+Backend tests need Node.js only. Browser tests need Playwright and installed Chrome; point ACS_PLAYWRIGHT to your Playwright package if it is not locally installed. ACS_BROWSER_CHANNEL defaults to chrome. Browser output is written to test-output/.
+
+Both suites use sample in-memory data. The browser intercepts Apps Script requests and exercises the shipped backend functions through service substitutes. Tests never call the production API.
+
+Coverage includes mandatory booking fields, date/time checks, slot conflicts, retry IDs, staff cancellation/audit, check-in guards, item creation/reuse/UOM/cost/tags, stock/history writes, invoice closure/idempotency/rollback, removed reminder dependencies, desktop/mobile UI and A4 printing. PDF previews include short documents and a 65-line invoice.
+
+Real Google authentication, network/CORS, Apps Script locks across Google executions, quotas and deployment permissions require the live checklist in RELEASE_v0.4.0.md. No production deployment or live data mutation was performed for this release.

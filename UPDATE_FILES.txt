@@ -1,0 +1,34 @@
+ACS v0.4.0 update-only contents
+Base: 420a030f37ff37adceee1f44d9f572e5acb312cc
+Extract over the repository root, preserving directories.
+config.js and unchanged image assets are excluded.
+See RELEASE_v0.4.0.md for Apps Script deployment and required setupSheets().
+
+.gitignore
+CHANGELOG_v0.4.0.md
+DEPLOYMENT.md
+README.md
+README.txt
+RELEASE_v0.4.0.md
+TESTING.md
+UPDATE_FILES.txt
+VALIDATION_v0.4.0.md
+app.html
+app.js
+apps-script/Api.gs
+apps-script/Booking.gs
+apps-script/README.md
+apps-script/Schema.gs
+apps-script/SheetDb.gs
+index.html
+lib/api.js
+lib/data.js
+lib/documents.js
+lib/slots.js
+setup.html
+site.js
+styles.css
+tests/backend-harness.cjs
+tests/backend.test.cjs
+tests/browser.test.cjs
+tests/slots.test.cjs

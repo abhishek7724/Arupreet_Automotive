@@ -299,3 +299,56 @@ footer{background:#171a17;color:#e7ebe4;border-top:0;padding:30px 4vw}footer .br
 .brand-strip{margin-top:14px;padding:20px 4vw 22px;gap:42px;background:transparent;border-bottom:1px solid #e3e4de}
 @media(max-width:900px){.hero-v2{height:auto;min-height:560px}.trust-strip{grid-template-columns:repeat(3,1fr)}.trust-strip span:nth-child(3){border-right:0}.trust-strip span:nth-child(n+4){border-top:1px solid #e7e8e2}}
 @media(max-width:650px){.hero-v2{min-height:560px}.hero-content{padding:56px 7vw 60px}.hero-content h1{font-size:40px}.trust-strip{grid-template-columns:1fr 1fr;margin:0 10px;border-radius:0 0 18px 18px}.trust-strip span{padding:16px 18px}.trust-strip span:nth-child(odd){border-right:1px solid #e7e8e2}.trust-strip span:nth-child(even){border-right:0}.trust-strip span:nth-child(n+3){border-top:1px solid #e7e8e2}.trust-strip span:last-child{grid-column:1/-1}.brand-strip{margin-top:10px;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding:16px 18px 18px;gap:30px}}
+
+/* ACS v0.4: booking, billing editor and aligned printable service documents. */
+.booking-form small,.optional-label{font-size:11px;color:#59605a;font-weight:400}
+.booking-form select:disabled{background:#eef0ea;color:#555}
+.cancel-history{display:block;max-width:240px;white-space:normal;margin-top:7px;color:#6a514b}
+.status.closed{background:#e6f2e8;color:#235b3a}.status.cancelled{background:#f4e7e2;color:#7d3828}
+.bill-line-row{grid-template-columns:1fr 1fr 1fr 1fr;align-items:end}
+.bill-line-row .bill-item,.bill-line-row .bill-desc{grid-column:span 2}
+.bill-line-row .bill-desc{order:0}
+.service-document{color:#202923;background:white;padding:16px 10px;font:13px/1.55 Arial,sans-serif}
+.service-document p{margin:4px 0;overflow-wrap:anywhere;white-space:pre-wrap}
+.document-header{display:flex;justify-content:space-between;gap:24px;border-bottom:3px solid #334c39;padding-bottom:23px}
+.document-identity{display:flex;gap:18px;align-items:center;min-width:0}
+.document-logo{background:#273a2c;color:#eff5dc;padding:14px 11px;font-size:28px;letter-spacing:-1px;font-weight:bold;line-height:1;display:block}
+.document-logo span{display:block;white-space:nowrap;letter-spacing:1px;font-size:5px;margin-top:10px}
+.document-identity h2{font-size:21px;margin:0 0 7px;line-height:1.25}
+.document-identity p{font-size:11px;color:#536056}
+.document-reference{text-align:right;flex-shrink:0}
+.document-reference>span{font-size:10px;letter-spacing:2px;color:#536056;display:block}
+.document-reference strong{font-size:25px;font-weight:500;display:block}
+.document-reference p{font-size:11px}
+.document-meta{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #d7dfd6;font-size:11px}
+.document-meta b{margin-left:5px}
+.document-parties{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:22px 0;border-bottom:1px solid #d7dfd6}
+.service-document h3{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:#536056;margin:0 0 9px;font-weight:600}
+.document-parties strong{font-size:15px}
+.document-note{margin-top:20px}
+.document-note p{font-size:12px}
+.service-document .document-section-title{margin:25px 0 10px}
+.document-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}
+.document-table th{background:#edf1e8;color:#354c3c;padding:11px 9px;font-size:10px;text-transform:uppercase;text-align:left}
+.document-table td{padding:12px 9px;border-bottom:1px solid #dde3db;vertical-align:top;overflow-wrap:anywhere}
+.document-table th:first-child{width:8%}.document-table .number{text-align:right}
+.work-table th:last-child{width:10%;text-align:center}.work-table td:last-child{text-align:center}
+.invoice-table th:nth-child(2){width:40%}.invoice-table th:nth-child(3){width:17%}
+.document-table small{display:block;color:#697469;font-size:10px;margin-top:3px}
+.document-totals{width:44%;margin:20px 0 0 auto;break-inside:avoid}
+.document-totals p{display:flex;justify-content:space-between;gap:20px;padding:5px 0}
+.document-totals .total{font-size:20px;border-top:2px solid #344c3b;padding-top:10px;margin-top:8px}
+.document-signatures{display:flex;justify-content:space-between;gap:28px;margin-top:48px;font-size:11px;color:#59675b;break-inside:avoid}
+.document-signatures span{border-top:1px solid #bdc8bc;padding-top:10px;min-width:38%;max-width:48%}
+.document-footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid #d7dfd6;margin-top:30px;padding:12px 0 0;font-size:9px;color:#697469;background:white}
+@media(max-width:600px){.bill-line-row{grid-template-columns:1fr 1fr}.document-identity{display:block}.document-logo{display:none}.document-identity h2{font-size:17px}.document-reference strong{font-size:19px}.document-parties{gap:12px}.document-totals{width:70%}.document-footer{flex-direction:column;gap:3px}.service-document{padding:0}}
+@page{size:A4;margin:14mm}
+@media print{
+  html,body{height:auto!important;min-height:0!important;background:white!important;margin:0!important;padding:0!important}
+  body>*:not(.modal-backdrop){display:none!important}
+  .modal-backdrop{position:static!important;display:block!important;background:white!important;padding:0!important;overflow:visible!important;height:auto!important}
+  .modal{display:block!important;width:100%!important;max-width:none!important;max-height:none!important;height:auto!important;overflow:visible!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important}
+  .modal-actions{display:none!important}.service-document{padding:0;font-size:11pt;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .document-header,.document-parties,.document-meta{break-inside:avoid}.document-table thead{display:table-header-group}.document-table tr{break-inside:avoid}
+  .document-section-title{break-after:avoid}.document-note h3{break-after:avoid}.document-identity{display:flex}.document-logo{display:block}.document-footer{flex-direction:row}
+}

@@ -18,6 +18,11 @@ function iso_(v) {
   return v;
 }
 
+function sheetValue_(header,value) {
+  if(value instanceof Date && (header==='preferred_date'||header==='preferred_time'))return Utilities.formatDate(value,spreadsheet_().getSpreadsheetTimeZone(),header==='preferred_date'?'yyyy-MM-dd':'HH:mm');
+  return iso_(value);
+}
+
 function headers_(name) {
   const sh=sheet_(name), lastCol=sh.getLastColumn();
   if(lastCol<1)return [];
@@ -30,7 +35,7 @@ function rows_(name) {
   const values = sh.getRange(1,1,lastRow,lastCol).getValues();
   const headers = values[0].map(String);
   return values.slice(1).filter(r => r.some(v => v !== '' && v !== null)).map(r => {
-    const o = {}; headers.forEach((h,i)=>{if(h)o[h]=iso_(r[i])}); return o;
+    const o = {}; headers.forEach((h,i)=>{if(h)o[h]=sheetValue_(h,r[i])}); return o;
   });
 }
 
@@ -66,7 +71,7 @@ function updateByKey_(name, key, value, patch) {
   const rowNum = idx + 2, current = sh.getRange(rowNum,1,1,headers.length).getValues()[0];
   headers.forEach((h,i)=>{ if (Object.prototype.hasOwnProperty.call(patch,h)) current[i] = patch[h] === null ? '' : patch[h]; });
   sh.getRange(rowNum,1,1,headers.length).setValues([current]);
-  const out = {}; headers.forEach((h,i)=>out[h]=iso_(current[i])); return out;
+  const out = {}; headers.forEach((h,i)=>out[h]=sheetValue_(h,current[i])); return out;
 }
 
 function deleteByKey_(name, key, value) {
@@ -106,7 +111,7 @@ function upsertConfig_(key, value, notes) {
 function withWriteLock_(fn) {
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
-  try { return fn(); } finally { lock.releaseLock(); }
+  try { return fn(); } finally { try { SpreadsheetApp.flush(); } finally { lock.releaseLock(); } }
 }
 
 function dataCacheKey_(workshopId){return 'ACS_ALL_'+String(workshopId||ACS_WORKSHOP_ID)}

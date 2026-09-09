@@ -4,10 +4,10 @@ const ACS_SCHEMA = {
   Sessions: ['token','user_id','expires_at','created_at','last_seen_at'],
   Customers: ['id','workshop_id','name','phone','email','notes','created_at'],
   Vehicles: ['id','workshop_id','customer_id','registration','make','model','variant','model_year','odometer_km','vin','notes','created_at'],
-  Appointments: ['id','workshop_id','customer_id','vehicle_id','preferred_date','preferred_time','issue','status','source','web_id','created_at'],
+  Appointments: ['id','workshop_id','customer_id','vehicle_id','preferred_date','preferred_time','issue','status','source','web_id','cancelled_at','cancelled_by','cancellation_reason','created_at'],
   // approval_* columns are retained for backward compatibility with existing v0.3 sheets,
   // but v0.3.2 no longer uses an approval workflow.
-  Service_Jobs: ['id','workshop_id','job_no','appointment_id','customer_id','vehicle_id','bay','odometer_km','complaint','inspection_notes','approval_status','approval_token','status','check_in_at','completed_at','job_card_generated','job_card_created_at','created_at'],
+  Service_Jobs: ['id','workshop_id','job_no','appointment_id','customer_id','vehicle_id','bay','odometer_km','complaint','inspection_notes','work_to_be_done','approval_status','approval_token','status','check_in_at','completed_at','job_card_generated','job_card_created_at','created_at'],
   Job_Lines: ['id','workshop_id','job_id','line_type','inventory_item_id','description','quantity','unit','rate','approved','created_at'],
   Inventory_Items: ['id','workshop_id','sku','name','category','unit','on_hand','reorder_level','cost','selling_price','universal','compatibility_tags','active','created_at'],
   Stock_Movements: ['id','workshop_id','inventory_item_id','job_id','movement_type','quantity','unit','unit_cost','note','created_at'],
@@ -22,7 +22,7 @@ const ACS_TABLE_MAP = {
   customers: 'Customers', vehicles: 'Vehicles', appointments: 'Appointments',
   service_jobs: 'Service_Jobs', job_lines: 'Job_Lines', inventory_items: 'Inventory_Items',
   stock_movements: 'Stock_Movements', invoices: 'Invoices', service_history: 'Service_History',
-  reminders: 'Reminders', whatsapp_messages: 'WhatsApp_Messages'
+  whatsapp_messages: 'WhatsApp_Messages'
 };
 
 const ACS_WORKSHOP_ID = '00000000-0000-0000-0000-000000000001';
@@ -35,7 +35,7 @@ function setupSheets() {
   invalidateDataCache_();
   touchDataVersion_();
   installAutoSyncTrigger_();
-  return { ok: true, spreadsheetId: ss.getId(), sheets: Object.keys(ACS_SCHEMA), version: '0.3.4', autoSync: true };
+  return { ok: true, spreadsheetId: ss.getId(), sheets: Object.keys(ACS_SCHEMA), version: '0.4.0', autoSync: true };
 }
 
 // Additive upgrade: never reorder/delete existing columns. Missing v0.3.2 columns are appended.
@@ -65,7 +65,7 @@ function seedConfig_() {
     phone: '919999827339',
     address: 'Electronic City, Bengaluru',
     timezone: 'Asia/Kolkata',
-    daily_capacity: '3',
+    daily_capacity: '6',
     whatsapp_mode: 'click_to_chat'
   };
   Object.keys(defaults).forEach(k => { if (existing[k] === undefined || existing[k] === '') upsertConfig_(k, defaults[k], 'ACS Digital'); });
