@@ -37,7 +37,7 @@ function updateSyncUi(mode='idle'){
 }
 function formatSyncAge(d){const sec=Math.max(0,Math.round((Date.now()-d.getTime())/1000));if(sec<8)return 'just now';if(sec<60)return `${sec}s ago`;return `${Math.floor(sec/60)}m ago`}
 async function reload(render=true,force=false){state=await ACSData.load(force);lastSyncAt=new Date();setMode();updateSyncUi();if(render)renderView(currentView)}
-function setMode(){const live=state?._mode==='sheets';$('#runtimeMode').textContent='v0.3.5';$('#signOutBtn').style.display=live?'inline-flex':'none'}
+function setMode(){const live=state?._mode==='sheets';$('#runtimeMode').textContent='v0.3.7';$('#signOutBtn').style.display=live?'inline-flex':'none'}
 async function mutate(fn,msg){try{await fn();await reload(false);renderView(currentView);if(msg)notify(msg)}catch(e){showError(e)}}
 async function syncNow(showToast=true){try{updateSyncUi('syncing');state=await ACSData.refresh();lastSyncAt=new Date();setMode();renderView(currentView);updateSyncUi();if(showToast)notify('Up to date')}catch(e){updateSyncUi();showError(e)}} window.syncNow=syncNow;
 async function autoSync(){
@@ -130,5 +130,17 @@ function renderSettings(){title.textContent='Settings';const cfg=ACSRuntime.read
 $('#quickAdd').onclick=()=>openService();
 $('#signOutBtn').onclick=async()=>{await ACSApi.logout();location.href='auth.html'};
 $('#syncBtn')?.addEventListener('click',()=>syncNow(true));
-async function boot(){try{const forceDemo=new URLSearchParams(location.search).get('demo')==='1';if(forceDemo&&ACSRuntime.configured()){const c=ACSRuntime.read();ACSRuntime.write({...c,appsScriptUrl:''});state=await ACSData.load();ACSRuntime.write(c)}else state=await ACSData.load();lastSyncAt=new Date();setMode();updateSyncUi();renderDashboard()}catch(e){if(e.code==='AUTH_REQUIRED'||e.message==='AUTH_REQUIRED'){location.href='auth.html';return}content.innerHTML=`<div class="panel"><h3>Could not load ACS Operations</h3><p>${esc(e.message)}</p><a class="btn dark" href="setup.html">Open setup</a> <a class="btn ghost" href="app.html?demo=1">Use demo mode</a></div>`}}
+async function boot(){
+  const loadingTimer=setTimeout(()=>{if(!state)content.innerHTML=`<div class="panel loading-panel"><div class="loading-spinner"></div><h3>Connecting to ACS…</h3><p>This is taking longer than usual. The page will continue automatically when the backend responds.</p></div>`},2500);
+  try{
+    const forceDemo=new URLSearchParams(location.search).get('demo')==='1';
+    if(forceDemo&&ACSRuntime.configured()){const c=ACSRuntime.read();ACSRuntime.write({...c,appsScriptUrl:''});state=await ACSData.load();ACSRuntime.write(c)}else state=await ACSData.load();
+    clearTimeout(loadingTimer);lastSyncAt=new Date();setMode();updateSyncUi();renderDashboard();
+    if(state?._stale)notify('Showing last synced data · reconnecting automatically');
+  }catch(e){
+    clearTimeout(loadingTimer);
+    if(e.code==='AUTH_REQUIRED'||e.message==='AUTH_REQUIRED'){location.href='auth.html';return}
+    content.innerHTML=`<div class="panel load-error"><h3>Could not connect to ACS</h3><p>${esc(e.message)}</p><div class="error-actions"><button class="btn dark" onclick="location.reload()">Retry</button><a class="btn ghost" href="setup.html">Check setup</a></div></div>`
+  }
+}
 boot().then(startAutoSync);
