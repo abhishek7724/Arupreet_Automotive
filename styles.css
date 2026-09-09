@@ -352,3 +352,9 @@ footer{background:#171a17;color:#e7ebe4;border-top:0;padding:30px 4vw}footer .br
   .document-header,.document-parties,.document-meta{break-inside:avoid}.document-table thead{display:table-header-group}.document-table tr{break-inside:avoid}
   .document-section-title{break-after:avoid}.document-note h3{break-after:avoid}.document-identity{display:flex}.document-logo{display:block}.document-footer{flex-direction:row}
 }
+
+/* v0.4.1 — simplified billing */
+.simple-bill-help{margin:12px 0 16px;padding:11px 13px;border:1px solid var(--border,#dfe3dc);border-radius:12px;background:#f7f8f4;color:var(--muted,#66706a);font-size:13px;line-height:1.5}
+.simple-bill-line{grid-template-columns:minmax(108px,.75fr) minmax(240px,2.2fr) minmax(78px,.6fr) minmax(90px,.7fr) minmax(105px,.8fr) auto}
+.simple-bill-line .bill-desc{min-width:0}
+@media(max-width:850px){.simple-bill-line{grid-template-columns:1fr 1fr}.simple-bill-line .bill-desc{grid-column:1/-1}.simple-bill-line .remove-line{align-self:end}}
