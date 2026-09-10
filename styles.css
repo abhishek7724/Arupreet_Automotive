@@ -358,3 +358,120 @@ footer{background:#171a17;color:#e7ebe4;border-top:0;padding:30px 4vw}footer .br
 .simple-bill-line{grid-template-columns:minmax(108px,.75fr) minmax(240px,2.2fr) minmax(78px,.6fr) minmax(90px,.7fr) minmax(105px,.8fr) auto}
 .simple-bill-line .bill-desc{min-width:0}
 @media(max-width:850px){.simple-bill-line{grid-template-columns:1fr 1fr}.simple-bill-line .bill-desc{grid-column:1/-1}.simple-bill-line .remove-line{align-self:end}}
+
+/* Mobile presentation update over v0.4.1. Screen-only rules preserve A4 print. */
+.menu-toggle{display:none}
+@media screen{
+  img{max-width:100%}
+  .app-main,.panel,.modal,.booking-shell>*,.form-grid>*,.booking-form>*,.bill-line-row>*,.metric,.dashboard-grid>*{min-width:0}
+  input,select,textarea{min-width:0;max-width:100%}
+  .btn{white-space:normal;text-align:center}
+  :focus-visible{outline:3px solid #648036;outline-offset:3px}
+  .table-wrap{max-width:100%;overscroll-behavior-inline:contain}
+  .panel-head,.section-toolbar,.search-row,.detail-head,.top-actions{flex-wrap:wrap}
+  .action-cell{white-space:normal}
+  .action-cell .tiny-btn{margin:3px}
+  .modal-backdrop{padding:12px;overscroll-behavior:contain}
+  .modal{max-width:100%;max-height:calc(100dvh - 24px);overscroll-behavior:contain;scrollbar-gutter:stable}
+  body:has(.modal-backdrop:not(.hidden)){overflow:hidden}
+  .simple-bill-line{grid-template-columns:minmax(0,.85fr) minmax(0,2fr) minmax(0,.6fr) minmax(0,.7fr) minmax(0,.8fr) auto}
+  .simple-bill-line .bill-desc{grid-column:auto}
+  .info-row,.alert,.picker-row{overflow-wrap:anywhere}
+}
+@media screen and (max-width:1000px){
+  .menu-toggle{display:inline-flex;min-height:44px;align-self:center}
+  .site-nav{height:auto;min-height:76px;gap:10px;flex-wrap:wrap;padding:12px 4vw}
+  .site-nav .brand{margin-right:auto}
+  .site-nav nav{display:none;order:5;width:100%;flex-wrap:wrap;gap:6px}
+  .nav-open .site-nav nav{display:flex}
+  .site-nav nav a{padding:12px 16px;min-height:44px;border-radius:12px;background:#fff}
+  .sidebar{display:none;position:fixed;inset:80px 12px auto;width:min(330px,calc(100% - 24px));max-height:calc(100dvh - 96px);overflow:auto;border-radius:18px;box-shadow:var(--shadow)}
+  .nav-open .sidebar{display:flex}
+  .sidebar .app-brand span:last-child{display:flex}
+  .sidebar nav span{display:inline}
+  .sidebar-foot{display:flex;margin-top:18px}
+  .sidebar nav button{min-height:46px}
+  .app-main{margin-left:0;width:100%;padding:20px}
+  .app-top{gap:12px;flex-wrap:wrap}
+  .app-top>div:first-of-type{flex:1;min-width:0}
+  .app-top h1{font-size:clamp(24px,3vw,34px);overflow-wrap:anywhere}
+  .top-actions .ghost{display:inline-flex}
+  .sync-corner{min-width:44px;min-height:44px}
+  .btn,.tiny-btn,.quick-grid button,.tag-chip button,.tag-suggestions button{min-height:44px}
+  input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px;min-height:46px}
+  .simple-bill-line{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .simple-bill-line .bill-desc{grid-column:1/-1}
+  .hero-v2{height:auto;min-height:0}
+  .hero-content{padding:60px 6vw}
+  .search-row>*{min-width:0;max-width:100%}
+  .search-row input{flex:1 1 220px}
+  .section-toolbar>div,.detail-head>div{min-width:0;max-width:100%}
+}
+@media screen and (max-width:650px){
+  .site-nav{position:relative}
+  .site-nav .brand span:last-child{display:flex}
+  .site-nav .brand small{display:none}
+  .site-nav .brand b{font-size:13px}
+  .site-nav .nav-actions{width:100%}
+  .site-nav .nav-actions a{flex:1;font-size:13px;padding:10px}
+  .site-nav .nav-actions .ghost{display:inline-flex}
+  .hero-content{padding:42px 22px}
+  .hero-content h1{font-size:clamp(32px,9vw,42px);overflow-wrap:anywhere;line-height:1.08}
+  .hero-content>p{font-size:16px;line-height:1.65}
+  .hero-actions{flex-direction:column;align-items:stretch;gap:10px}
+  .section{padding:48px 20px}
+  .section h2,.dark-band h2,.copy-block h2{font-size:clamp(30px,8vw,40px);overflow-wrap:anywhere}
+  .section-head{margin-bottom:26px}
+  .service-cards,.process-grid,.booking-form,.form-grid,.setup-grid,.metric-grid,.detail-grid,.report-grid,.workshop-board{grid-template-columns:minmax(0,1fr)}
+  .booking-shell{gap:28px;margin-bottom:24px}
+  .trust-strip span{padding:14px;min-width:0;overflow-wrap:anywhere}
+  .brand-strip{max-width:100%;overscroll-behavior-inline:contain}
+  .image-frame{height:300px}.image-frame img{min-height:0}
+  .contact-grid{gap:24px}.contact-card{padding:20px}.contact-card>a{font-size:23px}
+  .contact-card>div{flex-wrap:wrap}
+  footer{overflow-wrap:anywhere;gap:18px}
+  .app-main{padding:14px 12px 32px}
+  .app-top{gap:10px;align-items:center}
+  .app-top>div:first-of-type{flex-basis:calc(100% - 90px)}
+  .app-top small{font-size:11px}
+  .top-actions{width:100%;gap:8px;align-items:center}
+  .top-actions #quickAdd{flex:1}
+  .panel{padding:14px;border-radius:16px}
+  .section-toolbar,.detail-head,.panel-head{align-items:flex-start;gap:10px}
+  .section-toolbar>div,.detail-head>div{display:flex;flex-wrap:wrap;gap:6px}
+  .section-toolbar>div:first-child,.detail-head>div:first-child{display:block}
+  .search-row{flex-direction:column}.search-row input{flex:auto;width:100%}
+  .wide{grid-column:1/-1}
+  .modal-backdrop{padding:8px}
+  .modal{width:100%;padding:18px 14px;max-height:calc(100dvh - 16px);border-radius:18px}
+  .modal h2{font-size:24px;overflow-wrap:anywhere}
+  .modal-actions{flex-direction:column;gap:10px}
+  .modal-actions .btn{width:100%;min-height:46px}
+  .simple-bill-line,.bill-line-row,.line-editor-row{grid-template-columns:minmax(0,1fr);gap:12px}
+  .bill-line-row .bill-desc,.bill-line-row .bill-item{grid-column:auto}
+  .bill-line-row label{font-size:12px}
+  .bill-line-row .remove-line{height:44px}
+  .bill-summary{grid-template-columns:minmax(0,1fr)}
+  .bill-add-buttons>*{flex:1 1 42%}
+  .info-row{flex-wrap:wrap;gap:5px 12px}
+  .tag-entry{flex-wrap:wrap}.tag-entry input{width:100%}
+  .auth-body{padding:16px}.auth-card,.setup-card,.approval-card{width:100%;padding:22px 18px}
+  .toast{left:12px;right:12px;bottom:16px;overflow-wrap:anywhere}
+  /* Label/value cards keep actions in view without discarding any columns. */
+  .data-table,.data-table tbody,.data-table tr,.data-table td{display:block;width:100%}
+  .data-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+  .data-table tbody tr{border:1px solid var(--line);border-radius:14px;margin:0 0 12px;padding:8px;background:#fff}
+  .data-table td{padding:9px 6px;white-space:normal;overflow-wrap:anywhere;max-width:none;text-align:left!important}
+  .data-table td::before{content:attr(data-label);display:block;font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .data-table td:last-child{border-bottom:0}
+  .data-table td[colspan]::before{display:none}
+  .document-header,.document-meta{flex-direction:column;gap:14px}
+  .document-reference{text-align:left;flex-shrink:1}
+  .document-parties{grid-template-columns:1fr}
+  .document-totals{width:100%}
+  .document-table{font-size:11px}.document-table th,.document-table td{padding:8px 3px;overflow-wrap:anywhere}
+  .document-signatures{gap:14px}.document-signatures span{min-width:0;flex:1}
+  .invoice-brand{flex-wrap:wrap;gap:14px}
+  .line-items{table-layout:fixed}.line-items td,.line-items th{padding:8px 3px;overflow-wrap:anywhere}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.toast{transition:none}}

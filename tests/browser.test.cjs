@@ -22,8 +22,17 @@ const server=http.createServer((req,res)=>{
     const b=JSON.parse(route.request().postData()||'{}');const result=backend.post(b.action,b,b.token);
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(result)});
   });
-  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+  const page=await context.newPage();
+  async function noOverflow(label){assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,label);if(await page.locator('#modalBackdrop:not(.hidden)').count())assert.equal(await page.locator('#modal').evaluate(el=>el.scrollWidth>el.clientWidth),false,label+' modal');}
+  async function navigate(view){const toggle=page.locator('.menu-toggle');if(await toggle.isVisible() && await toggle.getAttribute('aria-expanded')==='false')await toggle.click();await page.locator('[data-view='+view+']').click();}
+page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/index.html');
+  for(const width of [360,390,430,768,1024,1440]){
+    await page.setViewportSize({width,height:900});await noOverflow('public '+width);
+    const toggle=page.locator('.menu-toggle');if(await toggle.isVisible()){await toggle.click();await page.locator('#siteMenu a[href="#services"]').click();assert.equal(await toggle.getAttribute('aria-expanded'),'false');}
+    await page.screenshot({path:path.join(out,'site-'+width+'.png'),fullPage:true});
+  }
+  await page.setViewportSize({width:390,height:844});
   for(const name of ['name','phone','vehicle','date','time','issue'])assert.equal(await page.locator(`[name=${name}]`).getAttribute('required'),'');
   assert.equal(await page.locator('[name=email]').getAttribute('required'),null);
   assert.equal(await page.locator('#emailHelp').textContent(),'(enter to receive receipt and job card)');
@@ -36,9 +45,9 @@ const server=http.createServer((req,res)=>{
   assert.equal(await page.locator('[name=time] option[value="10:00"]').count(),0);
   await page.setViewportSize({width:390,height:844});await page.locator('#bookingForm').screenshot({path:path.join(out,'booking-mobile.png')});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-  await page.setViewportSize({width:1440,height:1000});await page.goto(base+'/app.html');await page.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
+  await page.setViewportSize({width:390,height:844});await page.goto(base+'/app.html');await page.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
   assert.equal(await page.locator('[data-view=reminders]').count(),0);
-  await page.locator('[data-view=appointments]').click();await page.getByRole('button',{name:'Cancel appointment',exact:true}).click();
+  await navigate('appointments');await page.getByRole('button',{name:'Cancel appointment',exact:true}).click();
   await page.locator('[name=reason]').fill('Rescheduled by customer');await page.locator('#cancelForm button.btn.dark').click();await page.waitForFunction(()=>document.querySelector('#appContent').textContent.includes('Rescheduled by customer'));
   assert.equal(backend.tables.Appointments[0].status,'Cancelled');
   await page.getByRole('button',{name:'+ Appointment',exact:true}).click();
@@ -50,13 +59,13 @@ const server=http.createServer((req,res)=>{
   assert.equal(await page.locator('.work-table tbody tr').count(),3);assert.match(await page.locator('.service-document').textContent(),/919999827339/);
   await page.locator('.service-document').screenshot({path:path.join(out,'job-card.png')});
   await page.pdf({path:path.join(out,'job-card.pdf'),preferCSSPageSize:true,printBackground:true});
-  await page.getByRole('button',{name:'Close',exact:true}).click();await page.locator('[data-view=jobs]').click();await page.getByRole('button',{name:'Open',exact:true}).click();await page.getByRole('button',{name:'Generate bill',exact:true}).click();
+  await page.getByRole('button',{name:'Close',exact:true}).click();await navigate('jobs');await page.getByRole('button',{name:'Open',exact:true}).click();await page.getByRole('button',{name:'Generate bill',exact:true}).click();
   const part=page.locator('.bill-line-row').nth(0),labour=page.locator('.bill-line-row').nth(1);
-  await part.locator('[name=description]').fill('Brake Cleaner');await part.locator('[name=quantity]').fill('2');await part.locator('[name=unit]').fill('can');await part.locator('[name=rate]').fill('200');await part.locator('[name=unit_cost]').fill('100');
+  await part.locator('[name=description]').fill('Brake Cleaner');await part.locator('[name=quantity]').fill('2');await part.locator('[name=unit]').fill('can');await part.locator('[name=rate]').fill('200');assert.equal(await part.locator('[name=unit_cost]').count(),0);
   await labour.locator('[name=description]').fill('Brake cleaning labour');await labour.locator('[name=rate]').fill('500');
   assert.equal(await page.locator('#billTotal').textContent(),'₹900');
   assert.equal(await page.locator('[name=months]').count(),0);
-  await page.locator('#modal').screenshot({path:path.join(out,'invoice-entry.png')});
+  await noOverflow('billing entry');await page.locator('#modal').screenshot({path:path.join(out,'invoice-entry.png')});
   await page.getByRole('button',{name:'Save bill & reduce inventory',exact:true}).click();await page.locator('.service-document').waitFor();
   assert.equal(backend.tables.Service_Jobs[0].status,'Closed');assert.equal(backend.tables.Invoices.length,1);assert.equal(backend.tables.Inventory_Items.length,1);assert.equal(backend.tables.Invoices[0].total,900);
   assert.match(await page.locator('.document-meta').textContent(),/Job No. 1001/);
@@ -65,6 +74,20 @@ const server=http.createServer((req,res)=>{
   await page.evaluate(()=>{const lines=Array.from({length:65},(_,i)=>({description:'Detailed service operation '+(i+1)+' — inspect, clean and refit the vehicle component',line_type:'Labour',quantity:1,unit:'job',rate:100}));showModal(ACSDocuments.invoice({name:'Arupreet Car Service',address:'Electronic City, Bengaluru',phone:'919999827339'},{invoice_no:9999,job_id:'long',created_at:'2030-01-10',subtotal:6500,total:6500,payment_status:'Paid',payment_method:'UPI'},{job_no:9999,odometer_km:48000},{name:'Sample Customer',phone:'9000000000'},{registration:'KA 01 AB 1234',make:'Hyundai',model:'i20'},lines)+ACSDocuments.actions())});
   await page.pdf({path:path.join(out,'invoice-multipage.pdf'),preferCSSPageSize:true,printBackground:true});
   await page.setViewportSize({width:390,height:844});assert.equal(await page.locator('.service-document').evaluate(el=>el.scrollWidth>el.clientWidth),false);
+  await page.getByRole('button',{name:'Close',exact:true}).click();
+  for(const width of [360,390,430,768,1024,1440]){
+    await page.setViewportSize({width,height:900});
+    for(const view of ['dashboard','appointments','vehicles','jobs','inventory','billing','whatsapp','reports','settings']){
+      await navigate(view);await noOverflow(view+' '+width);
+      await page.screenshot({path:path.join(out,view+'-'+width+'.png')});
+    }
+    for(const name of ['openAppointment','openVehicleForm','openService','openInventoryForm','openBillPicker']){
+      await page.evaluate(name=>window[name](),name);await noOverflow(name+' '+width);await page.evaluate(()=>closeModal());
+    }
+    await page.evaluate(()=>editInspection(state.service_jobs[0].id));await noOverflow('inspection '+width);await page.evaluate(()=>closeModal());
+    await page.evaluate(()=>viewInvoice(state.invoices[0].id));await noOverflow('invoice '+width);await page.evaluate(()=>closeModal());
+    await page.evaluate(()=>adjustStock(state.inventory_items[0].id));await noOverflow('stock '+width);await page.evaluate(()=>closeModal());
+  }
   assert.deepEqual(errors,[]);console.log('Browser checks passed: public booking, availability, mobile, staff cancellation/check-in, work list, item creation, invoice close, PDF rendering; no page errors.');
  }finally{await browser.close();server.close()}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1});
